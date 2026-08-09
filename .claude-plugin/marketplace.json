@@ -1,0 +1,21 @@
+{
+  "name": "reactbits.dev-skill",
+  "owner": {
+    "name": "Philotheephilix"
+  },
+  "metadata": {
+    "description": "React Bits (reactbits.dev) component-fetching skill for Claude Code",
+    "version": "1.0.0"
+  },
+  "plugins": [
+    {
+      "name": "react-bits",
+      "description": "Fetches React Bits animated components from the live registry instead of recalling them from memory",
+      "source": "./",
+      "strict": false,
+      "skills": [
+        "./react-bits"
+      ]
+    }
+  ]
+}
