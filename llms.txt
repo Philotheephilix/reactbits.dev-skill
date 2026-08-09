@@ -1,0 +1,29 @@
+# react-bits (Claude Code skill)
+
+> A Claude Code skill that fetches React Bits (reactbits.dev) component source live from its public registry, instead of an agent recalling/hallucinating it from training data. Verified failure mode without this skill: an agent guessed the wrong dependency name (`framer-motion` instead of the live `motion` package) and invented prop defaults.
+
+Repo: https://github.com/Philotheephilix/reactbits.dev-skill
+Landing page: https://philotheephilix.github.io/reactbits.dev-skill/
+License: this repo's own code is MIT. Fetched React Bits component source stays under React Bits' own license (MIT + Commons Clause, © David Haz) — nothing here vendors it.
+
+## Install
+
+```
+claude plugin marketplace add Philotheephilix/reactbits.dev-skill
+claude plugin install react-bits@reactbits.dev-skill
+```
+
+## Docs
+
+- [SKILL.md](react-bits/SKILL.md): the skill itself — hard rule (never write React Bits code from memory), fetch commands, workflow, known gotchas.
+- [catalog.md](react-bits/references/catalog.md): all 165 React Bits components (Text Animations, Animations, Components, Backgrounds), one-line description + dependencies each. Auto-regenerated daily from the live registry.
+- [rb-add.mjs](react-bits/scripts/rb-add.mjs): fetches a component's real source + dependencies from `https://reactbits.dev/r/<Name>-<JS|TS>-<CSS|TW>.json` and writes it to disk.
+- [gen-catalog.mjs](react-bits/scripts/gen-catalog.mjs): regenerates catalog.md from `reactbits.dev/llms.txt` + `reactbits.dev/r/registry.json`.
+- [update-catalog.yml](.github/workflows/update-catalog.yml): the daily GitHub Action that runs gen-catalog.mjs and commits only if the registry changed.
+
+## Key facts
+
+- 165 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW) = 660 registry entries.
+- Categories: Text Animations (32), Animations (36), Components (44), Backgrounds (53).
+- reactbits.dev is an SPA — unknown paths return HTTP 200 with an HTML shell. Every fetch must be JSON-validated, not trusted by status code alone.
+- 10 components depend on scoped npm packages (e.g. `@react-three/fiber@^9.3.0`); naive `split('@')` dependency parsing breaks on these.
