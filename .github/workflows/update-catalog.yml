@@ -1,0 +1,34 @@
+name: Update React Bits catalog
+
+on:
+  schedule:
+    - cron: '17 3 * * *' # daily, off the hour to dodge GitHub's top-of-hour scheduler load
+  workflow_dispatch: {}
+
+permissions:
+  contents: write
+
+jobs:
+  update-catalog:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+
+      - name: Regenerate catalog from reactbits.dev
+        run: node react-bits/scripts/gen-catalog.mjs
+
+      - name: Commit if changed
+        run: |
+          if git diff --quiet -- react-bits/references/catalog.md; then
+            echo "no changes"
+            exit 0
+          fi
+          git config user.name "github-actions[bot]"
+          git config user.email "github-actions[bot]@users.noreply.github.com"
+          git add react-bits/references/catalog.md
+          git commit -m "chore: update react-bits catalog $(date -u +%Y-%m-%d)"
+          git push

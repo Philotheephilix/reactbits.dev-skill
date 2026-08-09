@@ -48,7 +48,7 @@ curl -s https://reactbits.dev/r/registry.json                  # index, 660 entr
 
 ## Categories (165 total)
 
-Text Animations (32) · Animations (36) · Components (44) · Backgrounds (53). Full list with one-line descriptions and dependencies: [references/catalog.md](references/catalog.md).
+Text Animations (32) · Animations (36) · Components (44) · Backgrounds (53). Full list with one-line descriptions and dependencies: [references/catalog.md](references/catalog.md) — a GitHub Action regenerates it daily from the live registry, so it stays current without a skill update. Manual refresh: `node scripts/gen-catalog.mjs`.
 
 ## After installing
 

@@ -33,4 +33,9 @@ reactbits.dev is an SPA — unknown paths return HTTP 200 with an HTML shell. Th
 
 - `react-bits/SKILL.md` — the skill
 - `react-bits/scripts/rb-add.mjs` — fetches, resolves scoped-package deps, writes files, prints the install command
-- `react-bits/references/catalog.md` — offline catalog generated from `reactbits.dev/llms.txt` + `registry.json`
+- `react-bits/scripts/gen-catalog.mjs` — regenerates `references/catalog.md` from the live registry + llms.txt
+- `react-bits/references/catalog.md` — offline catalog; kept current by [`.github/workflows/update-catalog.yml`](.github/workflows/update-catalog.yml), which runs `gen-catalog.mjs` daily and commits if the registry changed
+
+## Keeping the catalog current
+
+`.github/workflows/update-catalog.yml` runs daily (03:17 UTC) and on manual dispatch. It regenerates `catalog.md` and commits only if the diff is non-empty — most days it's a no-op. Requires the repo to be pushed to GitHub with Actions enabled; nothing to configure beyond that (uses the default `GITHUB_TOKEN`).

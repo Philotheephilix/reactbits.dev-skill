@@ -1,6 +1,6 @@
 # React Bits Component Catalog
 
-165 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json — regenerate if stale (see SKILL.md).
+165 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
 
 Format: `Name — one-line description (deps: ...)`. Fetch with:
 ```
