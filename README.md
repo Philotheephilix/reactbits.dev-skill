@@ -2,6 +2,8 @@
 
 A Claude Code skill for [React Bits](https://reactbits.dev) (by David Haz, MIT + Commons Clause) — fetches real component source from the public registry instead of recalling it from training data.
 
+This repo's own tooling (script, workflow, catalog metadata) is [MIT licensed](LICENSE). It doesn't vendor any React Bits component source — `rb-add.mjs` fetches it live from reactbits.dev at install time, under React Bits' own license.
+
 The skill itself lives in [`react-bits/`](react-bits/SKILL.md) (personal-skills layout: `<repo>/<skill-name>/SKILL.md`).
 
 ## Why fetch instead of recall

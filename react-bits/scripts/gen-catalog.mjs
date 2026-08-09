@@ -19,6 +19,7 @@ const OUT = join(dirname(fileURLToPath(import.meta.url)), '..', 'references', 'c
 async function getJson(url) {
   const res = await fetch(url);
   const text = await res.text();
+  console.log(`fetched ${url} -> HTTP ${res.status}, ${text.length} bytes`);
   if (text.trimStart().startsWith('<')) throw new Error(`${url} returned the SPA HTML shell`);
   return JSON.parse(text);
 }
@@ -26,6 +27,7 @@ async function getJson(url) {
 async function getText(url) {
   const res = await fetch(url);
   const text = await res.text();
+  console.log(`fetched ${url} -> HTTP ${res.status}, ${text.length} bytes`);
   if (text.trimStart().startsWith('<')) throw new Error(`${url} returned the SPA HTML shell`);
   return text;
 }
