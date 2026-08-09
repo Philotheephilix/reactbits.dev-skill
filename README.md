@@ -12,13 +12,15 @@ Baseline test (no skill): asked for an Aurora background + BlurText heading, an 
 
 Same task, with the skill: the agent fetched the live registry JSON, installed the correct `motion` package, and reported prop defaults and an internal implementation detail (which prop drives a WebGL context rebuild vs. which is read per-frame) that only exist in the actual current source.
 
-## Install (personal skill)
+## Install
 
 ```bash
-ln -s "$(pwd)/react-bits" ~/.claude/skills/react-bits
+git clone https://github.com/Philotheephilix/reactbits.dev-skill.git ~/.claude/reactbits.dev-skill 2>/dev/null || git -C ~/.claude/reactbits.dev-skill pull; ln -sfn ~/.claude/reactbits.dev-skill/react-bits ~/.claude/skills/react-bits
 ```
 
-Restart the Claude Code session (skills load at session start).
+Restart the Claude Code session (skills load at session start). Re-run the same line later to update — it pulls the repo and refreshes the symlink.
+
+Working from a local clone instead? `ln -s "$(pwd)/react-bits" ~/.claude/skills/react-bits`.
 
 ## What's in the registry
 
