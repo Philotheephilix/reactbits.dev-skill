@@ -5,10 +5,10 @@ Claude Code skill for [React Bits](https://reactbits.dev) — fetches real compo
 ## Install
 
 ```bash
-git clone https://github.com/Philotheephilix/reactbits.dev-skill.git ~/.claude/reactbits.dev-skill 2>/dev/null || git -C ~/.claude/reactbits.dev-skill pull; ln -sfn ~/.claude/reactbits.dev-skill/react-bits ~/.claude/skills/react-bits
+claude plugin marketplace add Philotheephilix/reactbits.dev-skill && claude plugin install react-bits@reactbits.dev-skill
 ```
 
-Restart Claude Code. Re-run the same line anytime to update.
+To update later: `claude plugin update react-bits@reactbits.dev-skill`.
 
 ## What's here
 
