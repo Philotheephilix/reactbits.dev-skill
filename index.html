@@ -72,12 +72,26 @@
   .hero{position:relative; padding:120px 0 100px; overflow:hidden}
   #aurora{position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0; opacity:.85}
   .hero-inner{position:relative; z-index:1; text-align:center}
+  .hero-badges{
+    display:flex; align-items:center; justify-content:center; flex-wrap:wrap;
+    gap:10px; margin-bottom:28px;
+  }
   .eyebrow{
     display:inline-flex; align-items:center; gap:8px;
     font-family:var(--mono); font-size:.78rem; color:var(--green);
     border:1px solid var(--green-dim); background:var(--green-dim);
-    padding:6px 14px; border-radius:999px; margin-bottom:28px;
+    padding:6px 14px; border-radius:999px;
   }
+  .star-badge{
+    display:inline-flex; align-items:center; gap:7px;
+    font-family:var(--mono); font-size:.78rem; color:var(--text-dim);
+    border:1px solid var(--border); background:var(--bg-panel);
+    padding:6px 14px; border-radius:999px; text-decoration:none;
+    transition:border-color 160ms cubic-bezier(.23,1,.32,1), color 160ms cubic-bezier(.23,1,.32,1);
+  }
+  .star-badge .gh-icon{color:var(--amber); flex-shrink:0}
+  .star-badge:hover{border-color:var(--amber); color:var(--text)}
+  .star-badge #heroStarNum{color:var(--text); font-weight:600}
   h1{
     font-family:var(--display); font-weight:700; letter-spacing:-.03em;
     font-size:clamp(2.6rem, 6vw, 4.6rem); line-height:1.04; margin:0 0 22px;
@@ -257,7 +271,13 @@
 <header class="hero">
   <canvas id="aurora"></canvas>
   <div class="wrap hero-inner">
-    <span class="eyebrow">● claude code skill</span>
+    <div class="hero-badges">
+      <span class="eyebrow">● claude code skill</span>
+      <a class="star-badge" href="https://github.com/Philotheephilix/reactbits.dev-skill" target="_blank" rel="noopener" aria-label="Star this repo on GitHub">
+        <svg class="gh-icon" viewBox="0 0 16 16" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>
+        <span id="heroStarNum">—</span> stars on GitHub
+      </a>
+    </div>
     <h1>Don't recall it.<br><em>Fetch it.</em></h1>
     <p class="sub">A Claude Code skill that pulls real <code>react bits</code> component source from the live registry — every time an agent needs one, instead of guessing from memory.</p>
 
@@ -499,15 +519,21 @@
   (function(){
     var countEl = document.getElementById('ghStarCount');
     var numEl = document.getElementById('ghStarNum');
+    var heroNumEl = document.getElementById('heroStarNum');
     countEl.classList.add('loading');
     fetch('https://api.github.com/repos/Philotheephilix/reactbits.dev-skill')
       .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
       .then(function(data){
         var n = data.stargazers_count;
-        numEl.textContent = n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n);
+        var formatted = n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n);
+        numEl.textContent = formatted;
+        heroNumEl.textContent = formatted;
         countEl.classList.remove('loading');
       })
-      .catch(function(){ countEl.style.display = 'none'; });
+      .catch(function(){
+        countEl.style.display = 'none';
+        heroNumEl.closest('.star-badge').style.display = 'none';
+      });
   })();
 
   /* ---- copy buttons ---- */
