@@ -1,0 +1,629 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>react-bits — a Claude Code skill for React Bits</title>
+<meta name="description" content="Fetches real React Bits components from the live registry instead of recalling them from memory. A Claude Code skill." />
+<link rel="icon" href="data:image/svg+xml,<svg xmlns=%22http://www.w3.org/2000/svg%22 viewBox=%220 0 100 100%22><text y=%22.9em%22 font-size=%2290%22>🧩</text></svg>" />
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,400..800&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;600&display=swap" rel="stylesheet" />
+<style>
+  :root{
+    --bg:#0a0a0f;
+    --bg-panel:#121220;
+    --bg-panel-2:#171728;
+    --border:rgba(255,255,255,.09);
+    --text:#eceaf5;
+    --text-dim:#8d8ba3;
+    --violet:#7c5cff;
+    --violet-dim:#7c5cff33;
+    --green:#7CFF67;
+    --green-dim:#7cff6733;
+    --amber:#ffb454;
+    --radius:14px;
+    --display:'Bricolage Grotesque', system-ui, sans-serif;
+    --body:'Inter', system-ui, sans-serif;
+    --mono:'JetBrains Mono', ui-monospace, monospace;
+  }
+  *{box-sizing:border-box}
+  html{scroll-behavior:smooth}
+  body{
+    margin:0; background:var(--bg); color:var(--text);
+    font-family:var(--body); line-height:1.55;
+    -webkit-font-smoothing:antialiased;
+    overflow-x:hidden;
+  }
+  a{color:inherit}
+  ::selection{background:var(--green-dim); color:var(--green)}
+
+  .wrap{max-width:1080px; margin:0 auto; padding:0 24px}
+
+  /* ---------- nav ---------- */
+  nav{
+    position:sticky; top:0; z-index:50;
+    display:flex; align-items:center; justify-content:space-between;
+    padding:18px 24px; backdrop-filter:blur(12px);
+    background:rgba(10,10,15,.7); border-bottom:1px solid var(--border);
+  }
+  .brand{display:flex; align-items:center; gap:10px; font-family:var(--display); font-weight:700; font-size:1.05rem; letter-spacing:-.01em}
+  .brand-dot{width:9px;height:9px;border-radius:50%;background:var(--green); box-shadow:0 0 12px var(--green)}
+  nav a.navlink{font-size:.9rem; color:var(--text-dim); text-decoration:none; margin-left:28px; transition:color .15s ease}
+  nav a.navlink:hover{color:var(--text)}
+  .gh-btn{
+    display:inline-flex; align-items:center; gap:8px;
+    border:1px solid var(--border); border-radius:999px;
+    padding:7px 16px; font-size:.85rem; text-decoration:none; color:var(--text);
+    transition:border-color 160ms cubic-bezier(.23,1,.32,1), transform 160ms cubic-bezier(.23,1,.32,1);
+  }
+  .gh-btn:hover{border-color:var(--green); transform:translateY(-1px)}
+  .gh-btn:hover .gh-icon{color:var(--green)}
+  .gh-icon{transition:color 160ms ease; flex-shrink:0}
+  .gh-star-count{
+    display:inline-flex; align-items:center; gap:5px;
+    border-left:1px solid var(--border); padding-left:10px; margin-left:2px;
+    font-family:var(--mono); color:var(--text-dim); font-variant-numeric:tabular-nums;
+  }
+  .gh-star-count .gh-icon{color:var(--amber)}
+  .gh-star-count.loading #ghStarNum{opacity:.4}
+
+  /* ---------- hero ---------- */
+  .hero{position:relative; padding:120px 0 100px; overflow:hidden}
+  #aurora{position:absolute; inset:0; width:100%; height:100%; display:block; z-index:0; opacity:.85}
+  .hero-inner{position:relative; z-index:1; text-align:center}
+  .eyebrow{
+    display:inline-flex; align-items:center; gap:8px;
+    font-family:var(--mono); font-size:.78rem; color:var(--green);
+    border:1px solid var(--green-dim); background:var(--green-dim);
+    padding:6px 14px; border-radius:999px; margin-bottom:28px;
+  }
+  h1{
+    font-family:var(--display); font-weight:700; letter-spacing:-.03em;
+    font-size:clamp(2.6rem, 6vw, 4.6rem); line-height:1.04; margin:0 0 22px;
+  }
+  h1 em{
+    font-style:normal; color:var(--green);
+    background:linear-gradient(180deg, var(--green), #4fe0a0);
+    -webkit-background-clip:text; background-clip:text; color:transparent;
+  }
+  .sub{
+    font-size:clamp(1.05rem, 1.6vw, 1.25rem); color:var(--text-dim);
+    max-width:620px; margin:0 auto 44px;
+  }
+  .sub code{font-family:var(--mono); color:var(--text); background:var(--bg-panel); padding:2px 7px; border-radius:5px; font-size:.9em}
+
+  .install-box{
+    max-width:680px; margin:0 auto; text-align:left;
+    background:var(--bg-panel); border:1px solid var(--border); border-radius:var(--radius);
+    overflow:hidden; box-shadow:0 30px 80px -40px rgba(0,0,0,.7);
+  }
+  .install-head{
+    display:flex; align-items:center; justify-content:space-between;
+    padding:10px 16px; border-bottom:1px solid var(--border);
+    font-family:var(--mono); font-size:.75rem; color:var(--text-dim);
+  }
+  .dots{display:flex; gap:6px}
+  .dots span{width:9px;height:9px;border-radius:50%;background:#3a3a4a}
+  .copy-btn{
+    font-family:var(--mono); font-size:.75rem; color:var(--text-dim);
+    background:transparent; border:1px solid var(--border); border-radius:6px;
+    padding:4px 10px; cursor:pointer; transition:border-color 150ms ease, color 150ms ease;
+  }
+  .copy-btn:hover{border-color:var(--green); color:var(--green)}
+  .copy-btn.copied{color:var(--green); border-color:var(--green)}
+  .install-body{padding:18px 16px; font-family:var(--mono); font-size:.86rem; overflow-x:auto; white-space:pre}
+  .install-body .tok-cmd{color:var(--green)}
+  .install-body .tok-flag{color:var(--violet)}
+  .install-body .tok-dim{color:var(--text-dim)}
+
+  .scroll-cue{margin-top:56px; display:flex; justify-content:center; opacity:.5; animation:bob 2.2s ease-in-out infinite}
+  @keyframes bob{0%,100%{transform:translateY(0)}50%{transform:translateY(6px)}}
+
+  /* ---------- sections ---------- */
+  section{padding:96px 0}
+  .kicker{font-family:var(--mono); font-size:.78rem; color:var(--green); letter-spacing:.06em; text-transform:uppercase; margin-bottom:14px}
+  h2{font-family:var(--display); font-weight:700; letter-spacing:-.02em; font-size:clamp(1.8rem,3.4vw,2.6rem); margin:0 0 18px}
+  .lead{color:var(--text-dim); max-width:600px; font-size:1.05rem; margin-bottom:56px}
+
+  .reveal{opacity:0; transform:translateY(18px); transition:opacity 600ms cubic-bezier(.23,1,.32,1), transform 600ms cubic-bezier(.23,1,.32,1)}
+  .reveal.in{opacity:1; transform:translateY(0)}
+
+  /* problem / evidence */
+  .evidence{display:grid; grid-template-columns:1fr 1fr; gap:20px}
+  @media (max-width:760px){.evidence{grid-template-columns:1fr}}
+  .ev-card{border:1px solid var(--border); border-radius:var(--radius); padding:22px; background:var(--bg-panel)}
+  .ev-card.bad{border-color:#ff6b6b33}
+  .ev-card.good{border-color:var(--green-dim)}
+  .ev-tag{font-family:var(--mono); font-size:.72rem; letter-spacing:.05em; text-transform:uppercase; margin-bottom:12px; display:inline-block}
+  .ev-card.bad .ev-tag{color:#ff8a8a}
+  .ev-card.good .ev-tag{color:var(--green)}
+  .ev-quote{font-family:var(--mono); font-size:.85rem; color:var(--text); background:#000000a0; border-radius:8px; padding:14px; margin:0 0 12px; line-height:1.6; overflow-x:auto}
+  .ev-note{font-size:.9rem; color:var(--text-dim); margin:0}
+  .ev-note b{color:var(--text); font-weight:600}
+
+  /* terminal signature block */
+  .term{
+    background:#000; border:1px solid var(--border); border-radius:var(--radius);
+    padding:22px 22px 26px; font-family:var(--mono); font-size:.84rem;
+    min-height:190px;
+  }
+  .term-line{color:var(--text-dim); margin:0 0 6px; white-space:pre-wrap; word-break:break-all}
+  .term-line .p{color:var(--green)}
+  .term-line.result{color:#8fd1ff}
+  .term-cursor{display:inline-block; width:7px; height:14px; background:var(--green); vertical-align:middle; margin-left:2px; animation:blink 1s step-end infinite}
+  @keyframes blink{50%{opacity:0}}
+
+  /* category tabs */
+  .tabs{display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px}
+  .tab{
+    font-family:var(--mono); font-size:.82rem; color:var(--text-dim);
+    background:var(--bg-panel); border:1px solid var(--border); border-radius:999px;
+    padding:8px 16px; cursor:pointer; transition:all 160ms cubic-bezier(.23,1,.32,1);
+  }
+  .tab:hover{color:var(--text); border-color:var(--text-dim)}
+  .tab.active{color:#0a0a0f; background:var(--green); border-color:var(--green); font-weight:600}
+  .tab-panel{display:none}
+  .tab-panel.active{display:block}
+  .comp-grid{display:grid; grid-template-columns:repeat(auto-fill,minmax(150px,1fr)); gap:10px}
+  .comp-chip{
+    border:1px solid var(--border); border-radius:10px; padding:14px 12px;
+    font-family:var(--mono); font-size:.82rem; background:var(--bg-panel);
+  }
+  .comp-chip .dep{display:block; color:var(--text-dim); font-size:.72rem; margin-top:5px}
+
+  /* feature spotlight cards */
+  .features{display:grid; grid-template-columns:repeat(3,1fr); gap:18px}
+  @media (max-width:820px){.features{grid-template-columns:1fr}}
+  .spot-card{
+    position:relative; border:1px solid var(--border); border-radius:var(--radius);
+    padding:26px; background:var(--bg-panel); overflow:hidden;
+  }
+  .spot-card::before{
+    content:''; position:absolute; inset:0; opacity:0; pointer-events:none;
+    background:radial-gradient(320px circle at var(--mx,50%) var(--my,50%), var(--violet-dim), transparent 70%);
+    transition:opacity 300ms ease;
+  }
+  .spot-card:hover::before{opacity:1}
+  .spot-card h3{font-family:var(--display); font-size:1.15rem; margin:14px 0 8px; position:relative}
+  .spot-card p{color:var(--text-dim); font-size:.92rem; margin:0; position:relative}
+  .spot-icon{font-size:1.6rem; position:relative}
+
+  /* install steps */
+  .steps{counter-reset:step}
+  .step{
+    display:flex; gap:20px; padding:24px 0; border-top:1px solid var(--border);
+  }
+  .step:last-child{border-bottom:1px solid var(--border)}
+  .step-num{
+    counter-increment:step; font-family:var(--mono); color:var(--green); font-size:.85rem;
+    flex-shrink:0; width:28px; padding-top:3px;
+  }
+  .step-num::before{content:"0" counter(step)}
+  .step-body h4{margin:0 0 6px; font-family:var(--display); font-size:1.05rem}
+  .step-body p{margin:0; color:var(--text-dim); font-size:.92rem}
+  .step-body code{font-family:var(--mono); background:var(--bg-panel); padding:2px 8px; border-radius:6px; font-size:.85em}
+
+  /* cta */
+  .cta{
+    text-align:center; border:1px solid var(--border); border-radius:20px;
+    padding:64px 32px; background:radial-gradient(600px circle at 50% 0%, var(--violet-dim), transparent 70%), var(--bg-panel);
+    position:relative; overflow:hidden;
+  }
+  .cta h2{margin-bottom:12px}
+  .cta p{color:var(--text-dim); margin-bottom:32px}
+  .cta-btn{
+    position:relative; overflow:hidden; -webkit-tap-highlight-color:transparent;
+    font-family:var(--mono); font-weight:600; font-size:.95rem; color:#0a0a0f;
+    background:var(--green); border:none; border-radius:999px; padding:14px 30px;
+    cursor:pointer; transition:transform 160ms cubic-bezier(.23,1,.32,1);
+  }
+  .cta-btn:active{transform:scale(.97)}
+  .spark{position:absolute; width:5px; height:5px; border-radius:50%; background:var(--green); pointer-events:none}
+
+  footer{border-top:1px solid var(--border); padding:36px 0; text-align:center; color:var(--text-dim); font-size:.85rem}
+  footer a{color:var(--text-dim); text-decoration:underline; text-underline-offset:3px}
+  footer a:hover{color:var(--green)}
+
+  :focus-visible{outline:2px solid var(--green); outline-offset:3px}
+
+  @media (prefers-reduced-motion: reduce){
+    html{scroll-behavior:auto}
+    .scroll-cue{animation:none}
+    .reveal{transition:none; opacity:1; transform:none}
+    .term-cursor{animation:none}
+  }
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="brand"><span class="brand-dot"></span> react-bits</div>
+  <div>
+    <a class="navlink" href="#problem">why</a>
+    <a class="navlink" href="#catalog">catalog</a>
+    <a class="navlink" href="#install">install</a>
+    <a class="gh-btn" id="ghStarBtn" href="https://github.com/Philotheephilix/reactbits.dev-skill" target="_blank" rel="noopener" aria-label="Star this repo on GitHub">
+      <svg class="gh-icon" viewBox="0 0 16 16" width="16" height="16" fill="currentColor" aria-hidden="true"><path d="M8 0C3.58 0 0 3.58 0 8c0 3.54 2.29 6.53 5.47 7.59.4.07.55-.17.55-.38 0-.19-.01-.82-.01-1.49-2.01.37-2.53-.49-2.69-.94-.09-.23-.48-.94-.82-1.13-.28-.15-.68-.52-.01-.53.63-.01 1.08.58 1.23.82.72 1.21 1.87.87 2.33.66.07-.52.28-.87.51-1.07-1.78-.2-3.64-.89-3.64-3.95 0-.87.31-1.59.82-2.15-.08-.2-.36-1.02.08-2.12 0 0 .67-.21 2.2.82.64-.18 1.32-.27 2-.27.68 0 1.36.09 2 .27 1.53-1.04 2.2-.82 2.2-.82.44 1.1.16 1.92.08 2.12.51.56.82 1.27.82 2.15 0 3.07-1.87 3.75-3.65 3.95.29.25.54.73.54 1.48 0 1.07-.01 1.93-.01 2.2 0 .21.15.46.55.38A8.01 8.01 0 0 0 16 8c0-4.42-3.58-8-8-8Z"/></svg>
+      <span>Star</span>
+      <span class="gh-star-count" id="ghStarCount">
+        <svg class="gh-icon" viewBox="0 0 16 16" width="13" height="13" fill="currentColor" aria-hidden="true"><path d="M8 .25a.75.75 0 0 1 .673.418l1.882 3.815 4.21.612a.75.75 0 0 1 .416 1.279l-3.046 2.97.719 4.192a.75.75 0 0 1-1.088.791L8 12.347l-3.766 1.98a.75.75 0 0 1-1.088-.79l.72-4.194L.818 6.374a.75.75 0 0 1 .416-1.28l4.21-.611L7.327.668A.75.75 0 0 1 8 .25Z"/></svg>
+        <span id="ghStarNum">—</span>
+      </span>
+    </a>
+  </div>
+</nav>
+
+<header class="hero">
+  <canvas id="aurora"></canvas>
+  <div class="wrap hero-inner">
+    <span class="eyebrow">● claude code skill</span>
+    <h1>Don't recall it.<br><em>Fetch it.</em></h1>
+    <p class="sub">A Claude Code skill that pulls real <code>react bits</code> component source from the live registry — every time an agent needs one, instead of guessing from memory.</p>
+
+    <div class="install-box">
+      <div class="install-head">
+        <div class="dots"><span></span><span></span><span></span></div>
+        <span>terminal</span>
+        <button class="copy-btn" id="copyBtn">copy</button>
+      </div>
+      <div class="install-body" id="installCmd"><span class="tok-cmd">claude plugin marketplace add</span> Philotheephilix/reactbits.dev-skill <span class="tok-dim">&&</span>
+<span class="tok-cmd">claude plugin install</span> react-bits@reactbits.dev-skill</div>
+    </div>
+
+    <div class="scroll-cue">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 5v14M5 12l7 7 7-7"/></svg>
+    </div>
+  </div>
+</header>
+
+<section id="problem">
+  <div class="wrap">
+    <span class="kicker reveal">The problem</span>
+    <h2 class="reveal">Plausible isn't the same as current</h2>
+    <p class="lead reveal">Asked an agent — with no skill — to add an Aurora background and a BlurText heading. Here's exactly what came back, verbatim, next to the same request with the skill installed.</p>
+
+    <div class="evidence">
+      <div class="ev-card bad reveal">
+        <span class="ev-tag">✕ without the skill</span>
+        <p class="ev-quote">npm install ogl <b style="color:#ff8a8a">framer-motion</b></p>
+        <p class="ev-note">Guessed. <b>Wrong package</b> — the live dependency is <code style="font-family:var(--mono)">motion</code>. Invented prop defaults too, and only admitted the guessing when asked directly.</p>
+      </div>
+      <div class="ev-card good reveal">
+        <span class="ev-tag">✓ with the skill</span>
+        <p class="ev-quote">fetched https://reactbits.dev/r/Aurora-TS-TW.json<br>npm install ogl <b style="color:var(--green)">motion@^12.23.12</b></p>
+        <p class="ev-note">Pulled live. Correct package, real default values, and cited an implementation detail — which prop rebuilds the WebGL context vs. which is read per-frame — that only exists in the actual current source.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="fetch">
+  <div class="wrap">
+    <span class="kicker reveal">How it works</span>
+    <h2 class="reveal">One rule, enforced every time</h2>
+    <p class="lead reveal">Never write React Bits code from memory. The skill fetches <code style="font-family:var(--mono)">reactbits.dev/r/&lt;Name&gt;-&lt;JS|TS&gt;-&lt;CSS|TW&gt;.json</code> — the real shadcn-style registry — before touching a single line.</p>
+
+    <div class="term reveal" id="termBlock"></div>
+  </div>
+</section>
+
+<section id="catalog">
+  <div class="wrap">
+    <span class="kicker reveal">The registry</span>
+    <h2 class="reveal">165 components, 4 variants each</h2>
+    <p class="lead reveal">JS or TS, CSS or Tailwind. Auto-refreshed daily from the live registry by a GitHub Action, so the catalog never drifts from what reactbits.dev actually ships.</p>
+
+    <div class="tabs reveal" role="tablist">
+      <button class="tab active" data-tab="text">Text Animations · 32</button>
+      <button class="tab" data-tab="anim">Animations · 36</button>
+      <button class="tab" data-tab="comp">Components · 44</button>
+      <button class="tab" data-tab="bg">Backgrounds · 53</button>
+    </div>
+
+    <div class="tab-panel active reveal" data-panel="text">
+      <div class="comp-grid">
+        <div class="comp-chip">BlurText<span class="dep">motion</span></div>
+        <div class="comp-chip">SplitText<span class="dep">gsap</span></div>
+        <div class="comp-chip">DecryptedText<span class="dep">motion</span></div>
+        <div class="comp-chip">GlitchText<span class="dep">no deps</span></div>
+        <div class="comp-chip">CountUp<span class="dep">motion</span></div>
+        <div class="comp-chip">TextType<span class="dep">gsap</span></div>
+      </div>
+    </div>
+    <div class="tab-panel reveal" data-panel="anim">
+      <div class="comp-grid">
+        <div class="comp-chip">ClickSpark<span class="dep">no deps</span></div>
+        <div class="comp-chip">BlobCursor<span class="dep">gsap</span></div>
+        <div class="comp-chip">ImageTrail<span class="dep">gsap</span></div>
+        <div class="comp-chip">Magnet<span class="dep">no deps</span></div>
+        <div class="comp-chip">GlareHover<span class="dep">no deps</span></div>
+        <div class="comp-chip">Antigravity<span class="dep">three</span></div>
+      </div>
+    </div>
+    <div class="tab-panel reveal" data-panel="comp">
+      <div class="comp-grid">
+        <div class="comp-chip">Dock<span class="dep">motion</span></div>
+        <div class="comp-chip">SpotlightCard<span class="dep">no deps</span></div>
+        <div class="comp-chip">StaggeredMenu<span class="dep">gsap</span></div>
+        <div class="comp-chip">TiltedCard<span class="dep">motion</span></div>
+        <div class="comp-chip">Carousel<span class="dep">motion</span></div>
+        <div class="comp-chip">GlassSurface<span class="dep">no deps</span></div>
+      </div>
+    </div>
+    <div class="tab-panel reveal" data-panel="bg">
+      <div class="comp-grid">
+        <div class="comp-chip">Aurora<span class="dep">ogl</span></div>
+        <div class="comp-chip">Waves<span class="dep">no deps</span></div>
+        <div class="comp-chip">Silk<span class="dep">three</span></div>
+        <div class="comp-chip">FaultyTerminal<span class="dep">ogl</span></div>
+        <div class="comp-chip">DarkVeil<span class="dep">ogl</span></div>
+        <div class="comp-chip">LetterGlitch<span class="dep">no deps</span></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="features">
+  <div class="wrap">
+    <span class="kicker reveal">Under the hood</span>
+    <h2 class="reveal">Handles the parts that break</h2>
+    <p class="lead reveal">The registry has real footguns. The skill's fetch script handles them so the agent doesn't have to reinvent it per call.</p>
+
+    <div class="features">
+      <div class="spot-card reveal">
+        <div class="spot-icon">◆</div>
+        <h3>Scoped-package deps</h3>
+        <p>10 components depend on scoped packages like <code style="font-family:var(--mono);font-size:.85em">@react-three/fiber@^9.3.0</code>. Naive <code style="font-family:var(--mono);font-size:.85em">split('@')</code> parsing breaks on these. Handled correctly.</p>
+      </div>
+      <div class="spot-card reveal">
+        <div class="spot-icon">◆</div>
+        <h3>SPA-shell 200s</h3>
+        <p>reactbits.dev returns HTTP 200 with an HTML shell for unknown paths. Every response is JSON-validated before it's trusted — status code alone proves nothing.</p>
+      </div>
+      <div class="spot-card reveal">
+        <div class="spot-icon">◆</div>
+        <h3>Multi-file variants</h3>
+        <p>CSS variants ship a sibling <code style="font-family:var(--mono);font-size:.85em">.css</code> file alongside the component. Tailwind variants are single-file. Both written correctly.</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section id="install">
+  <div class="wrap">
+    <span class="kicker reveal">Setup</span>
+    <h2 class="reveal">Two commands</h2>
+
+    <div class="steps reveal">
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Add the marketplace</h4>
+          <p><code>claude plugin marketplace add Philotheephilix/reactbits.dev-skill</code></p>
+        </div>
+      </div>
+      <div class="step">
+        <div class="step-num"></div>
+        <div class="step-body">
+          <h4>Install the plugin</h4>
+          <p><code>claude plugin install react-bits@reactbits.dev-skill</code> — restart the session, skills load at startup.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section>
+  <div class="wrap">
+    <div class="cta reveal">
+      <h2>Stop guessing at component props</h2>
+      <p>165 components. Live registry. Zero recalled code.</p>
+      <button class="cta-btn" id="ctaBtn">Copy install command</button>
+    </div>
+  </div>
+</section>
+
+<footer>
+  <div class="wrap">
+    This page's own code is MIT. React Bits components are fetched live under React Bits' own license (MIT + Commons Clause, © David Haz).
+    <br><a href="https://github.com/Philotheephilix/reactbits.dev-skill">github.com/Philotheephilix/reactbits.dev-skill</a>
+  </div>
+</footer>
+
+<script>
+(function(){
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+  /* ---- aurora canvas background ---- */
+  var canvas = document.getElementById('aurora');
+  var ctx = canvas.getContext('2d');
+  var w, h, dpr = Math.min(window.devicePixelRatio || 1, 2);
+  var mouse = {x:.5, y:.4};
+  function resize(){
+    w = canvas.offsetWidth; h = canvas.offsetHeight;
+    canvas.width = w*dpr; canvas.height = h*dpr;
+    ctx.setTransform(dpr,0,0,dpr,0,0);
+  }
+  window.addEventListener('resize', resize);
+  resize();
+  window.addEventListener('mousemove', function(e){
+    mouse.x = e.clientX / window.innerWidth;
+    mouse.y = e.clientY / window.innerHeight;
+  });
+
+  var blobs = [
+    {cx:.3, cy:.3, r:.55, hue:'124,92,255', speed:.6, phase:0},
+    {cx:.7, cy:.25, r:.5, hue:'124,255,103', speed:.45, phase:2},
+    {cx:.5, cy:.55, r:.6, hue:'80,60,200', speed:.35, phase:4}
+  ];
+  var t = 0;
+  function draw(){
+    ctx.clearRect(0,0,w,h);
+    blobs.forEach(function(b, i){
+      var dx = Math.sin(t*b.speed + b.phase) * .08 + (mouse.x-.5)*.06*(i+1);
+      var dy = Math.cos(t*b.speed*.8 + b.phase) * .08 + (mouse.y-.5)*.06*(i+1);
+      var cx = (b.cx+dx) * w, cy = (b.cy+dy) * h, r = b.r * Math.max(w,h);
+      var g = ctx.createRadialGradient(cx,cy,0,cx,cy,r);
+      g.addColorStop(0, 'rgba('+b.hue+',.35)');
+      g.addColorStop(1, 'rgba('+b.hue+',0)');
+      ctx.fillStyle = g;
+      ctx.fillRect(0,0,w,h);
+    });
+    t += 0.008;
+    if(!reduced) requestAnimationFrame(draw);
+  }
+  draw();
+  if(reduced){
+    // static single paint already done by first draw() call above
+  }
+
+  /* ---- scroll reveal ---- */
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting){ en.target.classList.add('in'); io.unobserve(en.target); }
+    });
+  }, {threshold:.15});
+  document.querySelectorAll('.reveal').forEach(function(el){ io.observe(el); });
+
+  /* ---- spotlight cards ---- */
+  document.querySelectorAll('.spot-card').forEach(function(card){
+    card.addEventListener('mousemove', function(e){
+      var r = card.getBoundingClientRect();
+      card.style.setProperty('--mx', (e.clientX-r.left)+'px');
+      card.style.setProperty('--my', (e.clientY-r.top)+'px');
+    });
+  });
+
+  /* ---- github star count ---- */
+  (function(){
+    var countEl = document.getElementById('ghStarCount');
+    var numEl = document.getElementById('ghStarNum');
+    countEl.classList.add('loading');
+    fetch('https://api.github.com/repos/Philotheephilix/reactbits.dev-skill')
+      .then(function(r){ return r.ok ? r.json() : Promise.reject(r.status); })
+      .then(function(data){
+        var n = data.stargazers_count;
+        numEl.textContent = n >= 1000 ? (n/1000).toFixed(1)+'k' : String(n);
+        countEl.classList.remove('loading');
+      })
+      .catch(function(){ countEl.style.display = 'none'; });
+  })();
+
+  /* ---- copy buttons ---- */
+  var CMD = "claude plugin marketplace add Philotheephilix/reactbits.dev-skill && claude plugin install react-bits@reactbits.dev-skill";
+  function fallbackCopy(text){
+    var ta = document.createElement('textarea');
+    ta.value = text; ta.style.position = 'fixed'; ta.style.opacity = '0';
+    document.body.appendChild(ta); ta.select();
+    try { document.execCommand('copy'); } catch (e) {}
+    document.body.removeChild(ta);
+  }
+  function doCopy(btn){
+    var mark = function(){
+      var original = btn.textContent;
+      btn.textContent = btn===document.getElementById('ctaBtn') ? 'Copied ✓' : 'copied ✓';
+      btn.classList.add('copied');
+      setTimeout(function(){ btn.textContent = original; btn.classList.remove('copied'); }, 1800);
+    };
+    if (navigator.clipboard && navigator.clipboard.writeText) {
+      navigator.clipboard.writeText(CMD).then(mark, function(){ fallbackCopy(CMD); mark(); });
+    } else {
+      fallbackCopy(CMD); mark();
+    }
+  }
+  document.getElementById('copyBtn').addEventListener('click', function(){ doCopy(this); });
+  document.getElementById('ctaBtn').addEventListener('click', function(e){
+    doCopy(this);
+    if(!reduced) spark(e.currentTarget, e.clientX, e.clientY);
+  });
+
+  function spark(container, x, y){
+    var rect = container.getBoundingClientRect();
+    for(var i=0;i<14;i++){
+      var s = document.createElement('span');
+      s.className = 'spark';
+      var ang = (Math.PI*2*i)/14, dist = 40 + Math.random()*30;
+      s.style.left = (x-rect.left)+'px';
+      s.style.top = (y-rect.top)+'px';
+      container.style.position = container.style.position || 'relative';
+      container.appendChild(s);
+      var dx = Math.cos(ang)*dist, dy = Math.sin(ang)*dist;
+      s.animate([
+        {transform:'translate(0,0)', opacity:1},
+        {transform:'translate('+dx+'px,'+dy+'px)', opacity:0}
+      ], {duration:500, easing:'cubic-bezier(0.23,1,0.32,1)'}).onfinish = function(){ s.remove(); };
+    }
+  }
+
+  /* ---- tabs ---- */
+  document.querySelectorAll('.tab').forEach(function(tab){
+    tab.addEventListener('click', function(){
+      document.querySelectorAll('.tab').forEach(function(t){ t.classList.remove('active'); });
+      document.querySelectorAll('.tab-panel').forEach(function(p){ p.classList.remove('active'); });
+      tab.classList.add('active');
+      document.querySelector('.tab-panel[data-panel="'+tab.dataset.tab+'"]').classList.add('active');
+    });
+  });
+
+  /* ---- terminal typing signature ---- */
+  var termLines = [
+    {p:true, text:'node scripts/gen-catalog.mjs'},
+    {text:'fetched https://reactbits.dev/llms.txt -> HTTP 200, 28221 bytes'},
+    {text:'fetched https://reactbits.dev/r/registry.json -> HTTP 200, 271289 bytes'},
+    {result:true, text:'wrote references/catalog.md (165 components)'}
+  ];
+  var termEl = document.getElementById('termBlock');
+  var played = false;
+  var termIo = new IntersectionObserver(function(entries){
+    entries.forEach(function(en){
+      if(en.isIntersecting && !played){ played = true; playTerm(); }
+    });
+  }, {threshold:.4});
+  termIo.observe(termEl);
+
+  function playTerm(){
+    if(reduced){
+      termEl.innerHTML = termLines.map(lineHtml).join('');
+      return;
+    }
+    var li = 0;
+    function nextLine(){
+      if(li >= termLines.length) return;
+      var line = termLines[li];
+      var div = document.createElement('div');
+      div.className = 'term-line' + (line.result ? ' result' : '');
+      if (line.p) {
+        var promptSpan = document.createElement('span');
+        promptSpan.className = 'p';
+        promptSpan.textContent = '$ ';
+        div.appendChild(promptSpan);
+      }
+      var textNode = document.createTextNode('');
+      div.appendChild(textNode);
+      var cursor = document.createElement('span');
+      cursor.className = 'term-cursor';
+      div.appendChild(cursor);
+      termEl.appendChild(div);
+      var full = line.text, i = 0;
+      var iv = setInterval(function(){
+        i++;
+        textNode.textContent = full.slice(0,i);
+        if(i >= full.length){
+          clearInterval(iv);
+          cursor.remove();
+          li++;
+          setTimeout(nextLine, 140);
+        }
+      }, 9);
+    }
+    nextLine();
+  }
+  function lineHtml(line){
+    var prefix = line.p ? '<span class="p">$</span> ' : '';
+    return '<div class="term-line'+(line.result?' result':'')+'">'+prefix+line.text+'</div>';
+  }
+})();
+</script>
+</body>
+</html>
