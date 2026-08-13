@@ -1,6 +1,6 @@
 # React Bits Component Catalog
 
-165 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
+166 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
 
 Format: `Name — one-line description (deps: ...)`. Fetch with:
 ```
@@ -42,7 +42,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **VariableProximity** — Letter styling changes continuously with pointer distance mapping. (deps: motion)
 - **WarpText** — WebGL warp that bends and refracts the text around the pointer. (deps: ogl)
 
-## Animations (36)
+## Animations (37)
 
 - **AnimatedContent** — Wrapper that animates any children on scroll or mount with configurable direction, distance, duration, easing and disappear options. (deps: gsap)
 - **Antigravity** — 3D antigravity particle field that repels from the cursor with smooth motion. (deps: @react-three/fiber,three)
@@ -68,6 +68,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **MetallicPaint** — Liquid metallic paint shader which can be applied to SVG elements. (deps: none)
 - **Noise** — Animated film grain / noise overlay adding subtle texture and motion. (deps: none)
 - **OrbitImages** — SVG Path customizable orbiting images effect. (deps: motion)
+- **PixelSwap** — Pixel fragments assemble into a full cover, swap arbitrary content, then dissolve away with reversible colors and triggers. (deps: none)
 - **PixelTrail** — Pixelated cursor trail emitting fading squares with retro digital feel. (deps: @react-three/drei,@react-three/fiber,three)
 - **PixelTransition** — Pixel dissolve transition for content reveal on hover. (deps: gsap)
 - **Ribbons** — Flowing responsive ribbons/cursor trail driven by physics and pointer motion. (deps: ogl)
