@@ -1,6 +1,6 @@
 # React Bits Component Catalog
 
-166 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
+168 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
 
 Format: `Name — one-line description (deps: ...)`. Fetch with:
 ```
@@ -42,7 +42,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **VariableProximity** — Letter styling changes continuously with pointer distance mapping. (deps: motion)
 - **WarpText** — WebGL warp that bends and refracts the text around the pointer. (deps: ogl)
 
-## Animations (37)
+## Animations (38)
 
 - **AnimatedContent** — Wrapper that animates any children on scroll or mount with configurable direction, distance, duration, easing and disappear options. (deps: gsap)
 - **Antigravity** — 3D antigravity particle field that repels from the cursor with smooth motion. (deps: @react-three/fiber,three)
@@ -56,6 +56,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **FadeContent** — Simple directional fade / slide entrance / exit wrapper with threshold-based activation. (deps: gsap)
 - **GhostCursor** — Semi-transparent ghost cursor that smoothly follows the real cursor with a trailing effect. (deps: three)
 - **GlareHover** — Adds a realistic moving glare highlight on hover over any element. (deps: none)
+- **GlowCursor** — Shader-powered light trail that smoothly follows the pointer with customizable glow, color, taper and pulse. (deps: ogl)
 - **GradualBlur** — Progressively un-blurs content based on scroll or trigger creating a cinematic reveal. (deps: none)
 - **HalftoneReveal** — Print-style halftone dot matrix that resolves into sharp content around the cursor. (deps: ogl)
 - **ImageTrail** — Cursor-based image trail with several built-in variants. (deps: gsap)
@@ -129,7 +130,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **Stepper** — Animated multi-step progress indicator with active state transitions. (deps: motion)
 - **TiltedCard** — 3D perspective tilt card reacting to pointer. (deps: motion)
 
-## Backgrounds (53)
+## Backgrounds (54)
 
 - **AcidSquares** — A crystalline corridor of stacked squares receding into depth. (deps: ogl)
 - **Aurora** — Flowing aurora gradient background. (deps: ogl)
@@ -137,6 +138,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **Ballpit** — Physics ball pit simulation with bouncing colorful spheres. (deps: gsap,three)
 - **Beams** — Crossing animated ribbons with customizable properties. (deps: three,@react-three/fiber,@react-three/drei)
 - **ColorBends** — Vibrant color bends with smooth flowing animation. (deps: three)
+- **CRTWarp** — Full-canvas CRT plasma with curved distortion, scanlines, bloom and pointer interaction. (deps: three)
 - **DarkVeil** — Subtle dark background with a smooth animation and postprocessing. (deps: ogl)
 - **Dither** — Retro dithered noise shader background. (deps: @react-three/fiber,@react-three/postprocessing,postprocessing,three)
 - **DotField** — Interactive dot grid with cursor bulge, glow, sparkle, and wave effects. (deps: none)
