@@ -1,6 +1,6 @@
 # React Bits Component Catalog
 
-168 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
+170 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
 
 Format: `Name — one-line description (deps: ...)`. Fetch with:
 ```
@@ -81,9 +81,9 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **StickerPeel** — Sticker corner lift + peel interaction using 3D transform and shadow depth. (deps: gsap)
 - **Strands** — Glowing ribbon-like strands that ripple and weave across a transparent canvas. (deps: ogl)
 - **SwarmCursor** — Flocking particle swarm that chases the pointer, jostles for space and drifts apart at rest. (deps: ogl)
-- **TargetCursor** — A cursor follow animation with 4 corners that lock onto targets. (deps: gsap)
+- **TargetCursor** — A cursor follow animation with 4 corners that lock onto targets. (deps: react-dom,gsap)
 
-## Components (44)
+## Components (45)
 
 - **AccordionGallery** — Panels expand on hover or focus, revealing parallax imagery and captions. (deps: gsap)
 - **AnimatedList** — List items enter with staggered motion variants for polished reveals. (deps: motion)
@@ -111,6 +111,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **GlassSurface** — Advanced Apple-style glass surface with real-time distortion + lighting. (deps: none)
 - **GooeyNav** — Navigation indicator morphs with gooey blob transitions between items. (deps: none)
 - **InfiniteMenu** — Horizontally looping menu effect that scrolls endlessly with seamless wrap. (deps: gl-matrix)
+- **InfiniteSpiral** — An endlessly looping 3D helix of images with customizable motion, depth, spacing and interaction. (deps: none)
 - **Lanyard** — Swinging 3D lanyard / badge card with realistic inertial motion. (deps: none)
 - **LineSidebar** — Static list navigation with a cursor-proximity effect that shifts and highlights nearby items. (deps: none)
 - **MagicBento** — Interactive bento grid tiles expand + animate with various options. (deps: gsap)
@@ -130,7 +131,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **Stepper** — Animated multi-step progress indicator with active state transitions. (deps: motion)
 - **TiltedCard** — 3D perspective tilt card reacting to pointer. (deps: motion)
 
-## Backgrounds (54)
+## Backgrounds (55)
 
 - **AcidSquares** — A crystalline corridor of stacked squares receding into depth. (deps: ogl)
 - **Aurora** — Flowing aurora gradient background. (deps: ogl)
@@ -148,6 +149,7 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **Ferrofluid** — A churning magnetic fluid traced by glowing contour lines, with a cursor magnet. (deps: ogl)
 - **FloatingLines** — 3D floating lines that react to cursor movement. (deps: three)
 - **Galaxy** — Parallax realistic starfield with pointer interactions. (deps: ogl)
+- **GhostFibers** — A deep-blue recursive fiber field with luminous bands, radial twisting and soft atmospheric glow. (deps: ogl)
 - **GradientBlinds** — Layered gradient blinds with spotlight and noise distortion. (deps: ogl)
 - **GradientWaves** — Raymarched sine waves rolling toward a soft, hazy horizon. (deps: ogl)
 - **Grainient** — Grainy gradient swirls with soft wave distortion. (deps: ogl)
