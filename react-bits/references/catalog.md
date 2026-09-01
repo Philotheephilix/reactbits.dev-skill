@@ -1,6 +1,6 @@
 # React Bits Component Catalog
 
-170 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
+171 components, 4 variants each (JS-CSS, JS-TW, TS-CSS, TS-TW). Generated from https://reactbits.dev/llms.txt + https://reactbits.dev/r/registry.json by `scripts/gen-catalog.mjs` — do not hand-edit, regenerate instead.
 
 Format: `Name — one-line description (deps: ...)`. Fetch with:
 ```
@@ -131,9 +131,10 @@ node scripts/rb-add.mjs <Name> --variant <JS|TS>-<CSS|TW> --dest <path>
 - **Stepper** — Animated multi-step progress indicator with active state transitions. (deps: motion)
 - **TiltedCard** — 3D perspective tilt card reacting to pointer. (deps: motion)
 
-## Backgrounds (55)
+## Backgrounds (56)
 
 - **AcidSquares** — A crystalline corridor of stacked squares receding into depth. (deps: ogl)
+- **AeroShards** — A GPU-driven wind sculpture of folded foil shards with crisp detail, content-safe placements, and responsive pointer interactions. (deps: vgpu)
 - **Aurora** — Flowing aurora gradient background. (deps: ogl)
 - **Balatro** — The balatro shader, fully customizalbe and interactive. (deps: ogl)
 - **Ballpit** — Physics ball pit simulation with bouncing colorful spheres. (deps: gsap,three)
